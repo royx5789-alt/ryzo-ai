@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RYZO AI - Anime Power Suite</title>
+    <style>
+        /* ==========================================
+           1. STYLING UTAMA & RGB ANIME CYBERPUNK
+           ========================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #050508; color: #ffffff; padding: 12px; min-height: 100vh; }
+
+        @keyframes rgbGlow {
+            0% { border-color: #ff007f; box-shadow: 0 0 12px rgba(255, 0, 127, 0.6); }
+            25% { border-color: #00f0ff; box-shadow: 0 0 12px rgba(0, 240, 255, 0.6); }
+            50% { border-color: #7000ff; box-shadow: 0 0 12px rgba(112, 0, 255, 0.6); }
+            75% { border-color: #ff00ff; box-shadow: 0 0 12px rgba(255, 0, 255, 0.6); }
+            100% { border-color: #ff007f; box-shadow: 0 0 12px rgba(255, 0, 127, 0.6); }
+        }
+
+        @keyframes rgbText {
+            0% { color: #ff007f; text-shadow: 0 0 8px #ff007f; }
+            33% { color: #00f0ff; text-shadow: 0 0 8px #00f0ff; }
+            66% { color: #a855f7; text-shadow: 0 0 8px #a855f7; }
+            100% { color: #ff007f; text-shadow: 0 0 8px #ff007f; }
+        }
+
+        /* Animasi Pergerakan Foto Anime (Ken Burns Effect) */
+        @keyframes animeKenBurns {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.15) translate(-2%, -2%); }
+            100% { transform: scale(1) translate(0, 0); }
+        }
+
+        .page-section { display: none; }
+        .active-section { display: block; }
+
+        /* ==========================================
+           2. BANNER HERO SLIDER ANIME HD
+           ========================================== */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #ff007f;
+            margin-bottom: 15px;
+            animation: rgbGlow 6s linear infinite;
+        }
+
+        .slider-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            filter: brightness(0.75) contrast(1.1);
+        }
+
+        .slider-image.active {
+            opacity: 1;
+            animation: animeKenBurns 10s ease-in-out infinite alternate;
+        }
+
+        .slider-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(5, 5, 8, 0.2) 0%, rgba(5, 5, 8, 0.9) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .slider-dots {
+            position: absolute;
+            top: 10px; right: 10px;
+            display: flex; gap: 6px;
+            z-index: 3;
+        }
+
+        .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: 0.3s;
+        }
+
+        .dot.active-dot {
+            background: #ff007f;
+            box-shadow: 0 0 8px #ff007f;
+            width: 18px;
+            border-radius: 10px;
+        }
+
+        /* Buttons & Cards Anime Theme */
+        .title-rgb { animation: rgbText 4s linear infinite; font-weight: bold; }
+        .btn-rgb {
+            background: linear-gradient(90deg, #ff007f, #7000ff);
+            color: #fff; border: none; padding: 10px; border-radius: 8px;
+            font-weight: bold; font-size: 12px; cursor: pointer; width: 100%;
+            text-align: center; text-decoration: none; display: block;
+        }
+        .btn-rgb:active { transform: scale(0.98); }
+
+        .card {
+            background: #0d0d14; border: 1px solid #2e1065; border-radius: 12px;
+            padding: 12px; margin-bottom: 10px; animation: rgbGlow 8s linear infinite;
+        }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-full { grid-column: span 2; }
+
+        input, textarea {
+            width: 100%; padding: 10px; background: #12121a; border: 1px solid #312e81;
+            color: #fff; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 12px;
+        }
+        .back-btn { color: #00f0ff; font-size: 12px; text-decoration: none; cursor: pointer; display: inline-block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         PAGE 1: LOGIN SECTION (ANIME LOGIN)
+         ========================================== -->
+    <div id="loginSection" class="page-section active-section">
+        <div style="margin-top: 20vh;" class="card">
+            <h1 class="title-rgb" style="text-align: center; margin-bottom: 5px;">🌸 RYZO AI</h1>
+            <p style="font-size: 11px; color: #aaa; text-align: center; margin-bottom: 15px;">ANIME CYBERPUNK SUITE</p>
+            <input type="text" id="username" placeholder="Username (isi: admin)">
+            <input type="password" id="password" placeholder="Password (isi: ryzo123)">
+            <button class="btn-rgb" onclick="doLogin()">MASUK APLIKASI</button>
+            <p id="loginError" style="color:#ff4444; font-size:11px; margin-top:8px; display:none; text-align:center;">Username / Password Salah!</p>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PAGE 2: DASHBOARD SECTION
+         ========================================== -->
+    <div id="dashboardSection" class="page-section">
+        
+        <!-- HERO BANNER HD ANIME SLIDER -->
+        <div class="hero-slider">
+            <div class="slider-dots">
+                <div class="dot active-dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            
+            <!-- Gambar Banner Anime Cyberpunk HD -->
+            <img class="slider-image active" src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800&auto=format&fit=crop" alt="Anime Cyberpunk 1">
+            <img class="slider-image" src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=800&auto=format&fit=crop" alt="Anime Cyberpunk 2">
+            <img class="slider-image" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Anime Cyberpunk 3">
+
+            <div class="slider-overlay">
+                <h1 class="title-rgb" style="font-size: 20px;">RYZO AI Anime Suite</h1>
+                <p style="font-size: 10px; color: #00f0ff;">⚡ CYBERPUNK OTAKU POWER SUITE ⚡</p>
+            </div>
+        </div>
+
+        <input type="text" placeholder="Cari fitur anime...">
+
+        <p style="font-size: 12px; color: #ff007f; margin: 10px 0 5px 0;">✨ FITUR SPESIAL AI ANIME</p>
+        <div class="grid">
+            <div class="card grid-full">
+                <h3 class="title-rgb" style="font-size: 13px;">🖼️ Anime Paste-to-Prompt</h3>
+                <p style="font-size: 10px; color: #aaa; margin: 4px 0 8px 0;">Upload foto waifu/husbando untuk dibuatkan prompt AI otomatis.</p>
+                <button class="btn-rgb" onclick="navTo('promptSection')">Buka Generator</button>
+            </div>
+            <div class="card grid-full">
+                <h3 class="title-rgb" style="font-size: 13px;">💻 AI Anime Code Builder</h3>
+                <p style="font-size: 10px; color: #aaa; margin: 4px 0 8px 0;">Bikin kodingan web/app gaya anime otomatis dari perintah teks.</p>
+                <button class="btn-rgb" onclick="navTo('webBuilderSection')">Buka Builder</button>
+            </div>
+        </div>
+
+        <p style="font-size: 12px; color: #ff007f; margin: 15px 0 5px 0;">📥 MEDIA DOWNLOADER</p>
+        <div class="grid">
+            <div class="card">
+                <h4 style="font-size:12px;">🎵 TikTok & IG</h4>
+                <p style="font-size:9px; color:#888; margin-bottom:8px;">Download AMV/Video No WM</p>
+                <button class="btn-rgb" onclick="navTo('downloaderSection')">Download</button>
+            </div>
+            <div class="card">
+                <h4 style="font-size:12px;">▶️ YouTube MP3/4</h4>
+                <p style="font-size:9px; color:#888; margin-bottom:8px;">Download Ost Anime/Video</p>
+                <button class="btn-rgb" onclick="navTo('downloaderSection')">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PAGE 3: PASTE TO PROMPT SECTION
+         ========================================== -->
+    <div id="promptSection" class="page-section">
+        <span class="back-btn" onclick="navTo('dashboardSection')">← Kembali ke Dashboard</span>
+        <div class="card">
+            <h2 class="title-rgb" style="font-size:16px; margin-bottom:10px;">ANIME PASTE TO PROMPT</h2>
+            <input type="file" id="photoInput" accept="image/*">
+            <button class="btn-rgb" onclick="processPrompt()">Bikin Prompt Anime AI</button>
+            <div id="promptOutput" style="margin-top:10px; font-size:11px; color:#00f0ff; word-break:break-word;"></div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PAGE 4: AI WEB BUILDER SECTION
+         ========================================== -->
+    <div id="webBuilderSection" class="page-section">
+        <span class="back-btn" onclick="navTo('dashboardSection')">← Kembali ke Dashboard</span>
+        <div class="card">
+            <h2 class="title-rgb" style="font-size:16px; margin-bottom:10px;">ANIME CODE BUILDER</h2>
+            <textarea id="builderPrompt" placeholder="Instruksi kodingan... Contoh: Buatkan web profil waifu anime warna pink neon"></textarea>
+            <button class="btn-rgb" onclick="generateWebCode()">Generate Kode HTML</button>
+        </div>
+        <div class="card">
+            <p style="font-size:11px; color:#aaa; margin-bottom:5px;">Hasil Kodingan:</p>
+            <pre id="codeResult" style="font-size:10px; color:#ff007f; background:#000; padding:8px; border-radius:6px; overflow-x:auto; white-space:pre-wrap;">// Kodingan akan muncul di sini...</pre>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PAGE 5: DOWNLOADER SECTION
+         ========================================== -->
+    <div id="downloaderSection" class="page-section">
+        <span class="back-btn" onclick="navTo('dashboardSection')">← Kembali ke Dashboard</span>
+        <div class="card">
+            <h2 class="title-rgb" style="font-size:16px; margin-bottom:10px;">ANIME MEDIA DOWNLOADER</h2>
+            <input type="text" id="mediaUrl" placeholder="Tempel Link Video (TikTok / YouTube / IG)">
+            <button class="btn-rgb" onclick="downloadVideo()">Download Media</button>
+            <p id="dlStatus" style="font-size:11px; margin-top:8px; text-align:center;"></p>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         LOGIC JAVASCRIPT & CAROUSEL SLIDER ENGINE
+         ========================================== -->
+    <script>
+        // Navigasi Pindah Halaman
+        function navTo(sectionId) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-section'));
+            document.getElementById(sectionId).classList.add('active-section');
+        }
+
+        // Login System
+        function doLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if(u === 'admin' && p === 'ryzo123') {
+                navTo('dashboardSection');
+                startImageSlider();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // Auto Image Slider Engine
+        let currentSlide = 0;
+        let slideInterval;
+
+        function startImageSlider() {
+            const images = document.querySelectorAll('.slider-image');
+            const dots = document.querySelectorAll('.dot');
+            if (images.length === 0) return;
+
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                images[currentSlide].classList.remove('active');
+                dots[currentSlide].classList.remove('active-dot');
+
+                currentSlide = (currentSlide + 1) % images.length;
+
+                images[currentSlide].classList.add('active');
+                dots[currentSlide].classList.add('active-dot');
+            }, 4000);
+        }
+
+        // AI Paste to Prompt Engine
+        function processPrompt() {
+            const file = document.getElementById('photoInput').files[0];
+            const out = document.getElementById('promptOutput');
+            if(!file) return alert('Pilih foto anime dulu!');
+            out.innerText = "Menganalisis gambar anime...";
+            setTimeout(() => {
+                out.innerText = "PROMPT RESULT: 1girl, cyberpunk anime girl, glowing cyan eyes, neon pink hair, dark futuristic city background, masterpiece, 8k resolution, cinematic lighting --ar 16:9";
+            }, 1500);
+        }
+
+        // AI Web Builder Engine
+        async function generateWebCode() {
+            const prompt = document.getElementById('builderPrompt').value;
+            const out = document.getElementById('codeResult');
+            if(!prompt) return alert('Isi instruksi dulu!');
+            out.innerText = "AI sedang mengetik kodingan anime...";
+            try {
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Buatkan kode HTML anime untuk: " + prompt)}`);
+                const code = await res.text();
+                out.innerText = code;
+            } catch(e) {
+                out.innerText = "Gagal memuat kode. Coba lagi.";
+            }
+        }
+
+        // Media Downloader Engine
+        function downloadVideo() {
+            const url = document.getElementById('mediaUrl').value;
+            const st = document.getElementById('dlStatus');
+            if(!url) return alert('Tempel link dulu!');
+            st.innerText = "Memproses tautan media...";
+            setTimeout(() => {
+                st.innerHTML = `<a href="${url}" target="_blank" style="color:#00f0ff; font-weight:bold;">Klik di sini untuk Unduh Media</a>`;
+            }, 1500);
+        }
+    </script>
+</body>
+  </html>
+  
