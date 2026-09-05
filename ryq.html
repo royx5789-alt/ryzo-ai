@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RYZO AI - Advanced Neural Core</title>
+    <style>
+        :root {
+            --bg-dark: #080511;
+            --panel-bg: #120c24;
+            --purple-main: #a100ff;
+            --purple-glow: #d000ff;
+            --cyan-accent: #00f0ff;
+            --text-light: #f0e6ff;
+            --border-color: rgba(161, 0, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 0 25px rgba(161, 0, 255, 0.25);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 94vh;
+        }
+
+        /* 1. LAYAR LOGIN */
+        #authScreen {
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 12px var(--purple-glow);
+            margin-bottom: 5px;
+        }
+
+        .auth-sub {
+            font-size: 11px;
+            color: var(--cyan-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            color: var(--cyan-accent);
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: #0a0618;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .primary-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--purple-main), var(--cyan-accent));
+            border: none;
+            color: #fff;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        #authError {
+            color: #ff3366;
+            font-size: 11px;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        /* 2. MAIN DASHBOARD */
+        #mainDashboard {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* BANNER GAMBAR MATA UNGU */
+        .banner-header {
+            position: relative;
+            width: 100%;
+            height: 130px;
+            overflow: hidden;
+            border-bottom: 2px solid var(--purple-main);
+            flex-shrink: 0;
+        }
+
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        /* STATUS SERVER BAR */
+        .status-bar {
+            background: #0a0618;
+            padding: 8px 12px;
+            font-size: 10px;
+            color: #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .status-online {
+            color: #00ffaa;
+            font-weight: bold;
+        }
+
+        .proxy-active {
+            color: var(--cyan-accent);
+            font-weight: bold;
+        }
+
+        /* TAB NAVIGATION */
+        .tab-nav {
+            display: flex;
+            background: #0a0618;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: #8a7aa8;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            color: var(--cyan-accent);
+            border-bottom: 2px solid var(--cyan-accent);
+            background: rgba(161, 0, 255, 0.15);
+        }
+
+        /* CONTENT VIEWS */
+        .view-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+        }
+
+        .view-content.active {
+            display: flex;
+        }
+
+        /* TAB 1: MENU GRID KOTAK-KOTAK */
+        .search-box {
+            width: 100%;
+            background: #0a0618;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .tool-card {
+            background: #1a1233;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 75px;
+        }
+
+        .tool-card:active {
+            transform: scale(0.97);
+            border-color: var(--cyan-accent);
+        }
+
+        .tool-name {
+            font-size: 11px;
+            font-weight: bold;
+            color: #e2d5ff;
+            margin-bottom: 6px;
+        }
+
+        .open-menu-btn {
+            background: #251a4a;
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            padding: 5px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* WORKSPACE PANEL POPUP */
+        .workspace-panel {
+            display: none;
+            background: #1a1233;
+            border: 1px solid var(--cyan-accent);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .ws-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .ws-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--cyan-accent);
+        }
+
+        .close-ws {
+            background: #ff0055;
+            color: #fff;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            background: #0a0618;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            resize: none;
+            outline: none;
+            margin-bottom: 6px;
+        }
+
+        .output-box {
+            background: #070410;
+            border: 1px dashed var(--purple-main);
+            padding: 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 10px;
+            color: #00ffcc;
+            max-height: 110px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* TAB 2: AI CHAT */
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .bubble-user {
+            align-self: flex-end;
+            background: var(--purple-main);
+            color: #fff;
+        }
+
+        .bubble-ai {
+            align-self: flex-start;
+            background: #1a1233;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-input-box {
+            display: flex;
+            gap: 6px;
+            background: #0a0618;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 6px;
+        }
+
+        .chat-input-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #fff;
+            outline: none;
+            font-size: 12px;
+            padding: 4px;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, var(--purple-main), var(--cyan-accent));
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* SETTINGS API KEY SECTION */
+        .api-settings {
+            background: #0a0618;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+        .api-settings input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--cyan-accent);
+            font-size: 10px;
+            outline: none;
+        }
+        .api-settings button {
+            background: var(--purple-main);
+            color: #fff;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 1. HALAMAN LOGIN -->
+        <div id="authScreen">
+            <div class="auth-logo">RYZO AI CORE</div>
+            <div class="auth-sub">Secure System Access</div>
+            
+            <div class="input-group">
+                <label>USERNAME:</label>
+                <input type="text" id="userInput" placeholder="Masukkan username...">
+            </div>
+
+            <div class="input-group">
+                <label>PASSWORD:</label>
+                <input type="password" id="passInput" placeholder="Masukkan password...">
+            </div>
+
+            <button class="primary-btn" onclick="handleLogin()">MASUK SISTEM</button>
+            <div id="authError"></div>
+        </div>
+
+        <!-- 2. DASHBOARD UTAMA -->
+        <div id="mainDashboard">
+            <!-- BANNER GAMBAR MATA UNGU -->
+            <div class="banner-header">
+                <img src="mata.jpg" class="banner-img" alt="Anime Banner">
+            </div>
+
+            <!-- STATUS SERVER BAR -->
+            <div class="status-bar">
+                <span class="status-online">✔ GEMINI ENGINE</span>
+                <span>ADVANCED AI</span>
+                <span class="proxy-active">⚡ SECURE KEY</span>
+            </div>
+
+            <!-- TAB NAVIGATION -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('toolsTab', this)">🎛️ MENU TOOLS</button>
+                <button class="tab-btn" onclick="switchTab('chatTab', this)">💬 AI CHAT ROOM</button>
+            </div>
+
+            <!-- TAB 1: MENU GRID FITUR -->
+            <div id="toolsTab" class="view-content active">
+                <input type="text" class="search-box" id="searchBox" placeholder="Cari nama fitur..." onkeyup="filterTools()">
+                
+                <div class="tools-grid" id="toolsGrid">
+                    <div class="tool-card" onclick="openTool('Instagram Downloader')">
+                        <div class="tool-name">Instagram Downloader</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('TikTok Downloader')">
+                        <div class="tool-name">TikTok Downloader</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('YouTube Downloader')">
+                        <div class="tool-name">YouTube Downloader</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('IQC Generator')">
+                        <div class="tool-name">IQC Generator</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('Code Builder')">
+                        <div class="tool-name">Code Builder</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('Text Summary')">
+                        <div class="tool-name">Text Summary</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('Security Audit')">
+                        <div class="tool-name">Security Audit</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                    <div class="tool-card" onclick="openTool('Bug Debugger')">
+                        <div class="tool-name">Bug Debugger</div>
+                        <div class="open-menu-btn">Buka Menu</div>
+                    </div>
+                </div>
+
+                <!-- WORKSPACE POPUP -->
+                <div class="workspace-panel" id="workspacePanel">
+                    <div class="ws-header">
+                        <span class="ws-title" id="wsTitle">WORKSPACE</span>
+                        <button class="close-ws" onclick="closeTool()">Tutup</button>
+                    </div>
+                    <textarea id="toolInput" rows="2" placeholder="Masukkan link atau perintah..."></textarea>
+                    <button class="send-btn" style="width:100%; margin-bottom:6px;" onclick="processToolRequest()">Jalankan Tugas</button>
+                    <div class="output-box" id="toolOutput">Hasil akan muncul di sini...</div>
+                </div>
+            </div>
+
+            <!-- TAB 2: AI CHAT ROOM -->
+            <div id="chatTab" class="view-content">
+                <!-- INPUT API KEY GEMINI -->
+                <div class="api-settings">
+                    <input type="password" id="apiKeyInput" placeholder="Masukkan Gemini API Key (Opsional)...">
+                    <button onclick="saveApiKey()">Simpan</button>
+                </div>
+                <div style="font-size: 9px; color: #8a7aa8; margin: 4px 0 8px 2px;">*Kosongkan jika ingin pakai fallback engine otomatis.</div>
+
+                <div class="chat-history" id="chatHistory">
+                    <div class="chat-bubble bubble-ai">Halo Roy! Sistem RYZO AI neural core siap mendengarkan perintah kompleksmu.</div>
+                </div>
+                <div class="chat-input-box">
+                    <input type="text" id="chatInput" placeholder="Ketik pesan mendalam..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                    <button class="send-btn" onclick="sendChatMessage()">Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let activeTool = "";
+
+        function handleLogin() {
+            const user = document.getElementById('userInput').value.trim();
+            const pass = document.getElementById('passInput').value.trim();
+            const err = document.getElementById('authError');
+
+            if (user === "royganteng" && pass === "orang ganteng royal") {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('mainDashboard').style.display = 'flex';
+                // Load saved API key if exists
+                const savedKey = localStorage.getItem('ryzo_gemini_key');
+                if(savedKey) document.getElementById('apiKeyInput').value = savedKey;
+            } else {
+                err.innerText = "❌ Username atau Password salah!";
+            }
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('ryzo_gemini_key', key);
+            alert("✅ API Key berhasil disimpan ke penyimpanan lokal browser!");
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.view-content').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function filterTools() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const cards = document.querySelectorAll('.tool-card');
+            cards.forEach(card => {
+                const name = card.querySelector('.tool-name').innerText.toLowerCase();
+                card.style.display = name.includes(query) ? "flex" : "none";
+            });
+        }
+
+        function openTool(toolName) {
+            activeTool = toolName;
+            document.getElementById('workspacePanel').style.display = 'block';
+            document.getElementById('wsTitle').innerText = "WORKSPACE: " + toolName;
+            document.getElementById('toolInput').value = "";
+            document.getElementById('toolOutput').innerText = "Masukkan data untuk " + toolName + "...";
+            document.getElementById('workspacePanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeTool() {
+            document.getElementById('workspacePanel').style.display = 'none';
+        }
+
+        async function callAI(promptText) {
+            const apiKey = localStorage.getItem('ryzo_gemini_key') || document.getElementById('apiKeyInput').value.trim();
+            
+            if (apiKey) {
+                // Menggunakan Gemini API Resmi (Lebih kompleks & pintar)
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: promptText }] }]
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.candidates && data.candidates[0].content) {
+                        return data.candidates[0].content.parts[0].text;
+                    } else if (data.error) {
+                        return "❌ Error API Gemini: " + data.error.message;
+                    }
+                } catch (e) {
+                    // Fallback ke public jika gagal
+                }
+            }
+
+            // Fallback otomatis ke Pollinations
