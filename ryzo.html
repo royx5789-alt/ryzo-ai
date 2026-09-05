@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RYZO AI - Cyber Intelligence Core</title>
+    <style>
+        :root {
+            --bg-dark: #080511;
+            --panel-bg: #120c24;
+            --purple-main: #a100ff;
+            --purple-glow: #d000ff;
+            --cyan-accent: #00f0ff;
+            --text-light: #f0e6ff;
+            --border-color: rgba(161, 0, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 0 25px rgba(161, 0, 255, 0.25);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 94vh;
+        }
+
+        /* HEADER & BANNER GAMBAR HD */
+        .banner-header {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+            border-bottom: 2px solid var(--purple-main);
+        }
+
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, var(--panel-bg) 0%, transparent 100%);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 10px var(--purple-glow);
+            letter-spacing: 1px;
+        }
+
+        .app-sub {
+            font-size: 11px;
+            color: var(--cyan-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* TAB NAVIGATION (MENU SEPARATED) */
+        .tab-nav {
+            display: flex;
+            background: #0a0618;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            background: none;
+            border: none;
+            color: #8a7aa8;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            color: var(--cyan-accent);
+            border-bottom: 2px solid var(--cyan-accent);
+            background: rgba(161, 0, 255, 0.15);
+            text-shadow: 0 0 8px var(--cyan-accent);
+        }
+
+        /* CONTENT VIEWS */
+        .view-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: none;
+        }
+
+        .view-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TAB 1: CHATGPT STYLE CHAT */
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 4px;
+            margin-bottom: 10px;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .bubble-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #a100ff, #7b00cc);
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+            box-shadow: 0 2px 8px rgba(161, 0, 255, 0.3);
+        }
+
+        .bubble-ai {
+            align-self: flex-start;
+            background: #1a1233;
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-box {
+            display: flex;
+            gap: 8px;
+            background: #0a0618;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-input-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #fff;
+            outline: none;
+            font-size: 13px;
+            padding: 4px 8px;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, var(--purple-main), var(--cyan-accent));
+            border: none;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* TAB 2: GRID MODUL 16 TOOLS */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .tool-card {
+            background: #1a1233;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-card:active {
+            transform: scale(0.97);
+            border-color: var(--cyan-accent);
+            background: #251a4a;
+        }
+
+        .tool-icon {
+            font-size: 18px;
+        }
+
+        .tool-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: #e2d5ff;
+        }
+
+        /* WORKSPACE PANEL (KERTAS KERJA TOOL) */
+        .workspace-panel {
+            display: none;
+            background: #1a1233;
+            border: 1px solid var(--cyan-accent);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .ws-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ws-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--cyan-accent);
+        }
+
+        .close-ws {
+            background: #ff0055;
+            color: #fff;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            background: #0a0618;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            resize: none;
+            outline: none;
+            margin-bottom: 8px;
+        }
+
+        .output-box {
+            background: #070410;
+            border: 1px dashed var(--purple-main);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00ffcc;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- HEADER DENGAN GAMBAR BANNER HD -->
+        <div class="banner-header">
+            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1000&auto=format&fit=crop" class="banner-img" alt="Cyber Anime Eyes Banner">
+            <div class="banner-overlay">
+                <div class="app-title">RYZO AI CORE</div>
+                <div class="app-sub">Cyber Intelligence System</div>
+            </div>
+        </div>
+
+        <!-- MENU TAB TERPISAH -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('chatTab', this)">💬 AI CHAT</button>
+            <button class="tab-btn" onclick="switchTab('toolsTab', this)">🛠️ 16 AI TOOLS</button>
+        </div>
+
+        <!-- TAB 1: INTERAKTIF AI CHAT (CHATGPT STYLE) -->
+        <div id="chatTab" class="view-content active">
+            <div class="chat-history" id="chatHistory">
+                <div class="chat-bubble bubble-ai">Halo! Saya RYZO AI. Ada yang ingin kamu diskusikan atau tanyakan hari ini?</div>
+            </div>
+            <div class="chat-input-box">
+                <input type="text" id="chatInput" placeholder="Ketik pesan seperti ChatGPT..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="send-btn" onclick="sendChatMessage()">Kirim</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: DAFTAR 16 MODUL AI TOOLS -->
+        <div id="toolsTab" class="view-content">
+            <div class="tools-grid" id="toolsGrid">
+                <div class="tool-card" onclick="openTool('Code Builder')"><span class="tool-icon">💻</span><span class="tool-name">1. Code Builder</span></div>
+                <div class="tool-card" onclick="openTool('Text Summary')"><span class="tool-icon">📝</span><span class="tool-name">2. Text Summary</span></div>
+                <div class="tool-card" onclick="openTool('Security Audit')"><span class="tool-icon">🛡️</span><span class="tool-name">3. Security Audit</span></div>
+                <div class="tool-card" onclick="openTool('Bug Debugger')"><span class="tool-icon">🐛</span><span class="tool-name">4. Bug Debugger</span></div>
+                <div class="tool-card" onclick="openTool('Regex Generator')"><span class="tool-icon">🔍</span><span class="tool-name">5. Regex Generator</span></div>
+                <div class="tool-card" onclick="openTool('SQL Query Builder')"><span class="tool-icon">🗄️</span><span class="tool-name">6. SQL Builder</span></div>
+                <div class="tool-card" onclick="openTool('API Endpoint Tester')"><span class="tool-icon">🌐</span><span class="tool-name">7. API Tester</span></div>
+                <div class="tool-card" onclick="openTool('JSON Formatter')"><span class="tool-icon">📋</span><span class="tool-name">8. JSON Formatter</span></div>
+                <div class="tool-card" onclick="openTool('Prompt Engineer')"><span class="tool-icon">💡</span><span class="tool-name">9. Prompt Engineer</span></div>
+                <div class="tool-card" onclick="openTool('Code Translator')"><span class="tool-icon">🔄</span><span class="tool-name">10. Translator</span></div>
+                <div class="tool-card" onclick="openTool('Cyber Nickname')"><span class="tool-icon">✨</span><span class="tool-name">11. Cyber Nick</span></div>
+                <div class="tool-card" onclick="openTool('Logic Solver')"><span class="tool-icon">🧮</span><span class="tool-name">12. Logic Solver</span></div>
+                <div class="tool-card" onclick="openTool('Markdown Converter')"><span class="tool-icon">📄</span><span class="tool-name">13. MD Converter</span></div>
+                <div class="tool-card" onclick="openTool('Hash Encoder')"><span class="tool-icon">🔐</span><span class="tool-name">14. Hash Encoder</span></div>
+                <div class="tool-card" onclick="openTool('Arch Planner')"><span class="tool-icon">📊</span><span class="tool-name">15. Arch Planner</span></div>
+                <div class="tool-card" onclick="openTool('Custom Assistant')"><span class="tool-icon">⚡</span><span class="tool-name">16. Custom Tool</span></div>
+            </div>
+
+            <!-- PANEL KERJA MODUL TOOL -->
+            <div class="workspace-panel" id="workspacePanel">
+                <div class="ws-header">
+                    <span class="ws-title" id="wsTitle">WORKSPACE</span>
+                    <button class="close-ws" onclick="closeTool()">Tutup</button>
+                </div>
+                <textarea id="toolInput" rows="3" placeholder="Masukkan instruksi atau kode..."></textarea>
+                <button class="send-btn" style="width:100%; margin-bottom:8px;" onclick="processToolRequest()">Jalankan Modul AI</button>
+                <div class="output-box" id="toolOutput">Hasil pemrosesan akan muncul di sini...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MEMORY SYSTEM UNTUK AI CHAT
+        let conversationHistory = [];
+        let activeTool = "";
+
+        // SWITCH TAB MENU
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.view-content').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // BUKA WORKSPACE TOOL
+        function openTool(toolName) {
+            activeTool = toolName;
+            document.getElementById('toolsGrid').style.display = 'none';
+            document.getElementById('workspacePanel').style.display = 'block';
+            document.getElementById('wsTitle').innerText = "MODUL: " + toolName;
+            document.getElementById('toolInput').value = "";
+            document.getElementById('toolOutput').innerText = "Masukkan detail tugas lalu tekan Jalankan...";
+        }
+
+        // TUTUP WORKSPACE TOOL
+        function closeTool() {
+            document.getElementById('toolsGrid').style.display = 'grid';
+            document.getElementById('workspacePanel').style.display = 'none';
+        }
+
+        // FUNGSI AI CHAT (CHATGPT STYLE CONTINUOUS CONVERSATION)
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const historyBox = document.getElementById('chatHistory');
+            const userText = input.value.trim();
+
+            if (!userText) return;
+
+            // Tampilkan pesan user
+            historyBox.innerHTML += `<div class="chat-bubble bubble-user">${escapeHtml(userText)}</div>`;
+            input.value = "";
+            historyBox.scrollTop = historyBox.scrollHeight;
+
+            // Tambahkan ke riwayat percakapan
+            conversationHistory.push("User: " + userText);
+
+            // Loading AI
+            const loadingId = "loading_" + Date.now();
+            historyBox.innerHTML += `<div class="chat-bubble bubble-ai" id="${loadingId}">Sedang mengetik...</div>`;
+            historyBox.scrollTop = historyBox.scrollHeight;
+
+            // Gabungkan konteks percakapan
+            const fullContext = "Kamu adalah RYZO AI, asisten pintar yang ramah dan responsif seperti ChatGPT. Berikut adalah riwayat percakapan sejauh ini:\n" + 
+                                conversationHistory.join("\n") + 
+                                "\nRYZO AI:";
+
+            try {
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullContext)}`);
+                const replyText = await response.text();
+
+                document.getElementById(loadingId).innerText = replyText;
+                conversationHistory.push("RYZO AI: " + replyText);
+
+            } catch (error) {
+                document.getElementById(loadingId).innerText = "❌ Maaf, koneksi AI terganggu. Coba lagi.";
+            }
+            historyBox.scrollTop = historyBox.scrollHeight;
+        }
+
+        // FUNGSI PROSES TOOL MODUL AI
+        async function processToolRequest() {
+            const input = document.getElementById('toolInput').value.trim();
+            const outputBox = document.getElementById('toolOutput');
+
+            if (!input) {
+                outputBox.innerText = "⚠️ Masukkan teks atau perintah terlebih dahulu!";
+                return;
+            }
+
+            outputBox.innerText = "⏳ Memproses modul [" + activeTool + "]...";
+
+            try {
+                const prompt = "Bertindaklah sebagai AI spesialis untuk modul [" + activeTool + "]. Selesaikan tugas ini secara lengkap dan akurat: " + input;
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+                const result = await response.text();
+
+                outputBox.innerText = result;
+            } catch (error) {
+                outputBox.innerText = "❌ Gagal memproses permintaan.";
+            }
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+    </script>
+</body>
+  </html>
+  
