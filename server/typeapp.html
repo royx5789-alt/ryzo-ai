@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All tools Ryzo AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <!-- ================= 1. HALAMAN LOGIN ================= -->
+    <div id="loginPage" class="bg-slate-900 border border-purple-500/30 w-full max-w-md p-8 rounded-2xl shadow-2xl">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 border border-purple-500/30">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <h1 class="text-xl font-bold text-purple-300">All Tools Kz & Ryzo AI</h1>
+            <p class="text-xs text-slate-400 mt-1">Silakan login untuk mengakses semua tools</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Username</label>
+                <input type="text" id="usernameInput" placeholder="admin" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Password</label>
+                <input type="password" id="passwordInput" placeholder="12345" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
+            </div>
+            <p id="errorMsg" class="text-xs text-red-400 text-center hidden">Username atau Password salah!</p>
+            <button onclick="handleLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-lg shadow-purple-600/20 cursor-pointer">
+                Masuk
+            </button>
+        </div>
+        <div class="mt-4 text-center text-[10px] text-slate-500">
+            Default User: <span class="text-purple-400">admin</span> | Pass: <span class="text-purple-400">12345</span>
+        </div>
+    </div>
+
+    <!-- ================= 2. DASHBOARD UTAMA ================= -->
+    <div id="dashboardPage" class="hidden w-full min-h-screen pb-12">
+        <!-- Banner Info Profil -->
+        <div class="relative bg-gradient-to-b from-purple-950 to-slate-950 p-6 border-b border-purple-900/40">
+            <div class="max-w-4xl mx-auto flex justify-between items-center mb-4">
+                <h1 class="text-xl font-bold text-purple-400 flex items-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> All Tools Kz
+                </h1>
+                <button onclick="handleLogout()" class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg hover:bg-red-600/30 transition cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-purple-900/20 backdrop-blur-md border border-purple-500/20 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-xl font-bold text-white shadow-lg">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">NEGARA <span class="text-slate-200">Indonesia</span></div>
+                            <div class="text-xs text-slate-400">BROWSER <span class="text-slate-200">Chrome</span></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-slate-300">
+                        <div><i class="fa-solid fa-mobile-screen"></i> Android</div>
+                        <div class="flex items-center gap-1 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Online</div>
+                        <div><i class="fa-solid fa-battery-three-quarters text-purple-400"></i> 85%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daftar Menu Tools -->
+        <main class="max-w-4xl mx-auto px-4 mt-6">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Semua Tools Aktif</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                
+                <!-- 1. Ryzo AI Chat -->
+                <div onclick="openModal('aiModal')" class="bg-purple-950/40 hover:bg-purple-900/50 border border-purple-500/30 rounded-2xl p-5 cursor-pointer transition-all hover:scale-[1.02] flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-200 mb-1">Ryzo AI Chat</h3>
+                    <p class="text-xs text-slate-400">Ngobrol interaktif selayaknya ChatGPT.</p>
+                </div>
+
+                <!-- 2. Instagram Downloader -->
+                <div onclick="openModal('igModal')" class="bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-pink-500/30 rounded-2xl p-5 cursor-pointer transition-all hover:scale-[1.02] flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-xl bg-pink-600/20 text-pink-400 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-brands fa-instagram"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-200 mb-1">Instagram</h3>
+                    <p class="text-xs text-slate-400 mb-3">Download video & foto HD</p>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-pink-300">Downloader</span>
+                </div>
+
+                <!-- 3. TikTok Downloader -->
+                <div onclick="openModal('ttModal')" class="bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/30 rounded-2xl p-5 cursor-pointer transition-all hover:scale-[1.02] flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-200 mb-1">TikTok</h3>
+                    <p class="text-xs text-slate-400 mb-3">No watermark MP4</p>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-cyan-300">Downloader</span>
+                </div>
+
+                <!-- 4. YouTube Downloader -->
+                <div onclick="openModal('ytModal')" class="bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-red-500/30 rounded-2xl p-5 cursor-pointer transition-all hover:scale-[1.02] flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-brands fa-youtube"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-200 mb-1">YouTube</h3>
+                    <p class="text-xs text-slate-400 mb-3">Video & audio MP4/MP3</p>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-red-300">Downloader</span>
+                </div>
+
+                <!-- 5. Windows Quotes -->
+                <div onclick="openModal('quoteModal')" class="bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/30 rounded-2xl p-5 cursor-pointer transition-all hover:scale-[1.02] flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-solid fa-window-maximize"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-200 mb-1">Windows Quotes</h3>
+                    <p class="text-xs text-slate-400 mb-3">Quote ala error Windows</p>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-blue-300">Maker</span>
+                </div>
+
+                <!-- 6. Tanya Ustadz -->
+                <div onclick="openModal('ustadzModal')" class="bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/30 rounded-2xl p-5 cursor-pointer transition-all hover:scale-[1.02] flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-200 mb-1">Tanya Ustadz</h3>
+                    <p class="text-xs text-slate-400 mb-3">Konsultasi & Tanya Jawab Agama</p>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-emerald-300">AI Assistant</span>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= 3. MODAL / POPUP FITUR-FITUR ================= -->
+
+    <!-- Modal Ryzo AI Chat -->
+    <div id="aiModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-purple-500/30 w-full max-w-lg h-[80vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+            <div class="bg-purple-950 p-4 border-b border-purple-900/40 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-sm">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-purple-300">Ryzo AI</h3>
+                        <p class="text-[10px] text-emerald-400">Online & Siap Membantu</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('aiModal')" class="text-slate-400 hover:text-white text-lg px-2 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 text-sm">
+                <div class="flex gap-2">
+                    <div class="w-7 h-7 rounded-full bg-purple-600 flex-shrink-0 flex items-center justify-center text-xs text-white">AI</div>
+                    <div class="bg-slate-800 text-slate-200 p-3 rounded-2xl max-w-[80%] text-xs leading-relaxed">
+                        Halo! Saya Ryzo AI. Saya bisa diajak ngobrol, membuat kode, atau menjawab pertanyaan apa pun selayaknya ChatGPT. Ada yang bisa saya bantu?
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-slate-950 border-t border-purple-900/30 flex gap-2">
+                <input type="text" id="userInput" placeholder="Ketik pesan ke Ryzo AI..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500" onkeypress="if(event.key==='Enter') sendAIChat()">
+                <button onclick="sendAIChat()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Instagram Downloader -->
+    <div id="igModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-pink-500/30 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-pink-400 flex items-center gap-2"><i class="fa-brands fa-instagram"></i> Instagram Downloader</h3>
+                <button onclick="closeModal('igModal')" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="text" id="igUrl" placeholder="Tempel link Reel / Foto Instagram..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 mb-3 focus:outline-none focus:border-pink-500">
+            <button onclick="processDownload('Instagram', 'igUrl', 'igResult')" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 rounded-xl text-xs transition cursor-pointer">Download Media</button>
+            <div id="igResult" class="mt-4 text-xs text-center text-slate-400"></div>
+        </div>
+    </div>
+
+    <!-- Modal TikTok Downloader -->
+    <div id="ttModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-cyan-500/30 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-cyan-400 flex items-center gap-2"><i class="fa-brands fa-tiktok"></i> TikTok Downloader</h3>
+                <button onclick="closeModal('ttModal')" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="text" id="ttUrl" placeholder="Tempel link video TikTok..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 mb-3 focus:outline-none focus:border-cyan-500">
+            <button onclick="processDownload('TikTok', 'ttUrl', 'ttResult')" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-xl text-xs transition cursor-pointer">Download No Watermark</button>
+            <div id="ttResult" class="mt-4 text-xs text-center text-slate-400"></div>
+        </div>
+    </div>
+
+    <!-- Modal YouTube Downloader -->
+    <div id="ytModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-red-500/30 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-red-400 flex items-center gap-2"><i class="fa-brands fa-youtube"></i> YouTube Downloader</h3>
+                <button onclick="closeModal('ytModal')" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="text" id="ytUrl" placeholder="Tempel link YouTube..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 mb-3 focus:outline-none focus:border-red-500">
+            <button onclick="processDownload('YouTube', 'ytUrl', 'ytResult')" class="w-full bg-red-600 hover:bg-red-500 text-white font-semibold py-2 rounded-xl text-xs transition cursor-pointer">Proses Video/Audio</button>
+            <div id="ytResult" class="mt-4 text-xs text-center text-slate-400"></div>
+        </div>
+    </div>
+
+    <!-- Modal Windows Quotes -->
+    <div id="quoteModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-blue-500/30 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-blue-400 flex items-center gap-2"><i class="fa-solid fa-window-maximize"></i> Windows Quotes Generator</h3>
+                <button onclick="closeModal('quoteModal')" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="text" id="quoteText" placeholder="Tulis pesan/quote galau ala Windows..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 mb-3 focus:outline-none focus:border-blue-500">
+            <button onclick="generateQuote()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-xl text-xs transition cursor-pointer">Generate Tampilan Error</button>
+            <div id="quoteResult" class="mt-4 p-3 bg-blue-950/40 border border-blue-500/30 rounded-xl text-xs text-blue-200 hidden"></div>
+        </div>
+    </div>
+
+    <!-- Modal Tanya Ustadz -->
+    <div id="ustadzModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-emerald-500/30 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-user-tie"></i> Tanya Ustadz Virtual</h3>
+                <button onclick="closeModal('ustadzModal')" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <textarea id="ustadzQuery" placeholder="Tanyakan seputar hukum Islam, ibadah, dll..." class="w-full h-24 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 mb-3 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+            <button onclick="askUstadz()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 rounded-xl text-xs transition cursor-pointer">Kirim Pertanyaan</button>
+            <div id="ustadzResult" class="mt-4 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-emerald-200 hidden max-h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- ================= 4. JAVASCRIPT PROGRAM UTAMA ================= -->
+    <script>
+        // Logika Login & Sesi
+        function handleLogin() {
+            const user = document.getElementById('usernameInput').value;
+            const pass = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (user === "admin" && pass === "12345") {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboardPage').classList.remove('hidden');
+                document.body.classList.remove('flex', 'items-center', 'justify-center');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('dashboardPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.body.classList.add('flex', 'items-center', 'justify-center');
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMsg').classList.add('hidden');
+        }
+
+        // Pengelolaan Modal Pop-up
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Fitur Ryzo AI Chat (Gaya ChatGPT)
+        async function sendAICha
