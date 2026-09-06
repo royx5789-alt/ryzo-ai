@@ -1,0 +1,287 @@
+/* ---------- Auth ---------- */
+let authToken = localStorage.getItem('ryzo_token') || null;
+
+function showApp(){
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('hubView').style.display = 'block';
+}
+function showLogin(){
+  document.getElementById('loginView').style.display = 'flex';
+  document.getElementById('hubView').style.display = 'none';
+  document.getElementById('chatView').style.display = 'none';
+}
+
+if (authToken) {
+  showApp();
+} else {
+  showLogin();
+}
+
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const loginBtn = document.getElementById('loginBtn');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  loginError.textContent = '';
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Memeriksa...';
+
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      loginError.textContent = data.error || 'Login gagal';
+      return;
+    }
+
+    authToken = data.token;
+    localStorage.setItem('ryzo_token', authToken);
+    showApp();
+  } catch (err) {
+    loginError.textContent = 'Tidak bisa menghubungi server. Coba lagi.';
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Masuk';
+  }
+});
+
+async function logout(){
+  try {
+    await fetch('/api/logout', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+  } catch (e) { /* ignore */ }
+  authToken = null;
+  localStorage.removeItem('ryzo_token');
+  showLogin();
+}
+
+/* ---------- View switching ---------- */
+function openChat(){
+  document.getElementById('chatView').style.display = 'flex';
+  document.getElementById('txt').focus();
+}
+function closeChat(){
+  document.getElementById('chatView').style.display = 'none';
+}
+
+/* ---------- Chat logic ---------- */
+const log = document.getElementById('log');
+const form = document.getElementById('form');
+const txt = document.getElementById('txt');
+let hint = document.getElementById('hint');
+let history = [];
+let isSending = false;
+
+txt.addEventListener('input', () => {
+  txt.style.height = 'auto';
+  txt.style.height = Math.min(txt.scrollHeight, 110) + 'px';
+});
+
+txt.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+/* ---- tiny markdown renderer (bold, italic, code, lists, headings) ---- */
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderMarkdown(raw){
+  const codeBlocks = [];
+  let text = raw.replace(/```([\s\S]*?)```/g, (m, code) => {
+    const cleaned = code.replace(/^[a-zA-Z0-9_+-]*\n/, '');
+    codeBlocks.push(escapeHtml(cleaned));
+    return '\u0000CODEBLOCK' + (codeBlocks.length - 1) + '\u0000';
+  });
+
+  text = escapeHtml(text);
+
+  text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  const lines = text.split('\n');
+  let html = '';
+  let inList = false;
+  let listType = 'ul';
+  let paragraph = [];
+
+  function flushParagraph(){
+    if (paragraph.length) {
+      html += '<p>' + paragraph.join('<br>') + '</p>';
+      paragraph = [];
+    }
+  }
+  function closeList(){
+    if (inList) { html += '</' + listType + '>'; inList = false; }
+  }
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const ol = /^\d+\.\s+(.*)$/.exec(trimmed);
+    const ul = /^[-*]\s+(.*)$/.exec(trimmed);
+
+    if (ol || ul) {
+      flushParagraph();
+      const type = ol ? 'ol' : 'ul';
+      if (!inList || listType !== type) { closeList(); html += '<' + type + '>'; inList = true; listType = type; }
+      html += '<li>' + (ol ? ol[1] : ul[1]) + '</li>';
+    } else if (trimmed === '') {
+      closeList();
+      flushParagraph();
+    } else if (/^<h[1-3]>/.test(trimmed)) {
+      closeList(); flushParagraph();
+      html += trimmed;
+    } else {
+      closeList();
+      paragraph.push(line);
+    }
+  }
+  closeList();
+  flushParagraph();
+
+  html = html.replace(/\u0000CODEBLOCK(\d+)\u0000/g, (m, i) => {
+    return '<pre><code>' + codeBlocks[parseInt(i)] + '</code></pre>';
+  });
+
+  return html;
+}
+
+function addRow(role, text){
+  if (hint) { hint.remove(); hint = null; }
+  const row = document.createElement('div');
+  row.className = 'row ' + (role === 'user' ? 'user' : 'ai');
+
+  if (role === 'user') {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    log.appendChild(row);
+  } else {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.innerHTML = renderMarkdown(text);
+
+    const actions = document.createElement('div');
+    actions.className = 'msg-actions';
+    const copyBtn = document.createElement('button');
+    copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.8"/></svg> Salin';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Disalin';
+        setTimeout(() => { copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.8"/></svg> Salin'; }, 1500);
+      });
+    };
+    actions.appendChild(copyBtn);
+
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.appendChild(bubble);
+    wrap.appendChild(actions);
+    row.appendChild(wrap);
+    log.appendChild(row);
+  }
+
+  log.scrollTop = log.scrollHeight;
+}
+
+function addTyping(){
+  const row = document.createElement('div');
+  row.className = 'row ai';
+  row.id = 'typing-row';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble typing';
+  bubble.innerHTML = '<span></span><span></span><span></span>';
+  row.appendChild(bubble);
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+}
+
+function removeTyping(){
+  const t = document.getElementById('typing-row');
+  if (t) t.remove();
+}
+
+function newChat(){
+  history = [];
+  log.innerHTML = '';
+  const h = document.createElement('div');
+  h.className = 'hint';
+  h.id = 'hint';
+  h.innerHTML = '<b>RYZO AI</b><br>Halo! Aku RYZO AI \u26A1 \u2014 bisa bantu jawab pertanyaan, jelasin sesuatu sampai detail, bikinin kode program, kasih saran, atau sekadar nemenin ngobrol.';
+  log.appendChild(h);
+  hint = h;
+  txt.value = '';
+  txt.style.height = 'auto';
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (isSending) return;
+  const message = txt.value.trim();
+  if (!message) return;
+
+  isSending = true;
+  addRow('user', message);
+  history.push({ role: 'user', content: message });
+  txt.value = '';
+  txt.style.height = 'auto';
+  addTyping();
+
+  try {
+    // Calls OUR OWN backend (server/server.js), which holds the real API key.
+    // Never call the Anthropic API directly from frontend code in production.
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + authToken
+      },
+      body: JSON.stringify({ messages: history })
+    });
+
+    if (response.status === 401) {
+      removeTyping();
+      addRow('ai', "Sesi kamu sudah habis. Silakan login lagi.");
+      isSending = false;
+      logout();
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error('Server error: ' + response.status);
+    }
+
+    const data = await response.json();
+    removeTyping();
+
+    const reply = data.reply || "Maaf, ada gangguan kecil. Coba kirim lagi ya.";
+    addRow('ai', reply);
+    history.push({ role: 'assistant', content: reply });
+  } catch (err) {
+    removeTyping();
+    addRow('ai', "Waduh, koneksi ke RYZO AI lagi bermasalah. Coba lagi sebentar lagi ya.");
+    console.error(err);
+  } finally {
+    isSending = false;
+  }
+});
